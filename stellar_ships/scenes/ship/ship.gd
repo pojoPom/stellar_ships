@@ -15,6 +15,12 @@ var rotation_dir = 0
 
 var engine = false
 
+var energy = 100
+var max_energy = 100
+var energy_gain = 1
+
+var plasma_bullet_energy = 15
+
 func get_input():
 	if Input.is_action_pressed("shoot"):
 		shoot()
@@ -57,15 +63,22 @@ func _physics_process(delta):
 
 
 func shoot():
-	if can_shoot:
+	if can_shoot && energy >= plasma_bullet_energy:
+		energy -= plasma_bullet_energy
 		can_shoot = false
 		$shoot_cool_down.wait_time = gun_cool_down
 		$shoot_cool_down.start()
 		var b = plasma_bullet.instance()
-		b.position = get_global_position()
+		b.position = $"bullet spawn".get_global_position()
 		b.rotation = get_rotation()
 		get_tree().get_root().add_child(b)
 
 
 func _on_shoot_cool_down_timeout():
 	can_shoot = true
+
+
+func _on_regain_energy_timeout():
+	energy += energy_gain
+	if energy > max_energy:
+		energy = max_energy

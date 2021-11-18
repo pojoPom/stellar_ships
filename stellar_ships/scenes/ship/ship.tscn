@@ -1,8 +1,12 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://art/light/light.jpg" type="Texture" id=1]
 [ext_resource path="res://art/ships/fighter-1.png" type="Texture" id=2]
 [ext_resource path="res://scenes/ship/ship.gd" type="Script" id=3]
+[ext_resource path="res://scenes/ship/HUD.gd" type="Script" id=4]
+[ext_resource path="res://art/Hud/blue-bar.png" type="Texture" id=5]
+[ext_resource path="res://art/Hud/over-bar.png" type="Texture" id=6]
+[ext_resource path="res://art/Hud/under-bar.png" type="Texture" id=7]
 
 [sub_resource type="Gradient" id=1]
 colors = PoolColorArray( 1, 0, 0.861328, 1, 0.948242, 0.666733, 0.915803, 1 )
@@ -65,9 +69,35 @@ speed_scale = 2.0
 process_material = SubResource( 3 )
 
 [node name="bullet spawn" type="Node2D" parent="."]
-position = Vector2( 7, 0 )
+position = Vector2( 13, 0 )
 
 [node name="shoot_cool_down" type="Timer" parent="."]
 one_shot = true
 
+[node name="regain_energy" type="Timer" parent="."]
+process_mode = 0
+wait_time = 0.1
+autostart = true
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource( 4 )
+
+[node name="energy" type="TextureProgress" parent="HUD"]
+margin_left = 7.0
+margin_top = 8.0
+margin_right = 107.0
+margin_bottom = 48.0
+rect_scale = Vector2( 2.5, 2.5 )
+value = 60.0
+texture_under = ExtResource( 7 )
+texture_over = ExtResource( 6 )
+texture_progress = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( 8, 0, -2, -8, -7, -1, -2, 8 )
+
 [connection signal="timeout" from="shoot_cool_down" to="." method="_on_shoot_cool_down_timeout"]
+[connection signal="timeout" from="regain_energy" to="." method="_on_regain_energy_timeout"]
